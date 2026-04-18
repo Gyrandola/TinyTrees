@@ -1,6 +1,3 @@
-#![no_std]
-#![no_main]
-
 /***
  *
  * === TinyTrees ===
@@ -18,9 +15,6 @@
  * and machine learning.
  *
  *
- *
- *
- *
  * === Reference material ===
  *
  * Concepts:
@@ -31,3 +25,11 @@
  * Documentation and source code:
  * https://github.com/scikit-learn/scikit-learn
  */
+
+#![no_std]
+#[warn(unused)]
+// #[warn(missing_docs)]
+
+mod tree;
+mod arena;
+mod errors;
