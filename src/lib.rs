@@ -29,6 +29,7 @@
 #![no_std]
 #[warn(unused)]
 // #[warn(missing_docs)]
+#[allow(dead_code)] // Todo: remove this
 
 mod tree;
 mod arena;
