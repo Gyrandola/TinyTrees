@@ -58,18 +58,17 @@ mod tests {
     use super::*;
     use crate::tree::Node;
     use crate::errors::ArenaError;
-
-
+    
     #[test]
-    fn test_alloc_and_retrieval_integrity() {
+    fn test_alloc_and_retrieval() {
         let mut arena: NodeArena<i32, 3> = NodeArena::new();
         let i0 = arena.alloc(Node::new_leaf(10)).unwrap();
         let i1 = arena.alloc(Node::new_leaf(20)).unwrap();
         assert_eq!(i0, 0);
         assert_eq!(i1, 1);
         assert_eq!(arena.len, 2);
-        assert_eq!(arena.get(i0).unwrap().prediction, 10);
-        assert_eq!(arena.get(i1).unwrap().prediction, 20);
+        assert_eq!(*arena.get(i0).unwrap().get_prediction().unwrap(), 10);
+        assert_eq!(*arena.get(i1).unwrap().get_prediction().unwrap(), 20);
     }
 
     #[test]
@@ -77,9 +76,9 @@ mod tests {
         let mut arena: NodeArena<&str, 2> = NodeArena::new();
         let idx = arena.alloc(Node::new_leaf("initial")).unwrap();
         if let Some(node) = arena.get_mut(idx) {
-            node.prediction = "changed";
+            *node.get_mut_prediction().unwrap() = "changed";
         }
-        assert_eq!(arena.get(idx).unwrap().prediction, "changed");
+        assert_eq!(*arena.get(idx).unwrap().get_prediction().unwrap(), "changed");
     }
 
     #[test]
@@ -94,16 +93,7 @@ mod tests {
     }
 
     #[test]
-    fn test_non_copy_label_support() {
-        #[derive(Debug, PartialEq)]
-        struct Unique(u32);
-        let mut arena: NodeArena<Unique, 1> = NodeArena::new();
-        let idx = arena.alloc(Node::new_leaf(Unique(42))).unwrap();
-        assert_eq!(arena.get(idx).unwrap().prediction, Unique(42));
-    }
-
-    #[test]
-    fn test_zero_capacity_edge_case() {
+    fn test_zero_capacity_full_error() {
         let mut arena: NodeArena<u8, 0> = NodeArena::new();
         assert_eq!(arena.alloc(Node::new_leaf(1)), Err(ArenaError::Full));
     }

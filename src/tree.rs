@@ -1,61 +1,70 @@
-
-
 #[derive(Debug, PartialEq)]
-pub struct Node<L> {
+pub enum Node<L> {
+    Leaf {
+        prediction: L,
+    },
+    Split {
+        feature_index: u8,
+        threshold: f32,
 
-    /// Determines if it is a leaf or split node.
-    pub is_leaf: bool,
-
-    /// Valid if is_leaf is true.
-    pub prediction: L,
-
-    /// Valid if is_leaf is false.
-    pub feature_index: u8,
-
-    /// Valid if is_leaf is false.
-    pub threshold: f32,
-
-    /// Index of the left child in the tree's node array. (values <= threshold)
-    pub left_child_index: usize,
-
-    /// Index of the right child in the tree's node array. (values > threshold)
-    pub right_child_index: usize,
+        /// Left child node (values <= threshold).
+        left_child_index: usize,
+        /// Right child node (values > threshold).
+        right_child_index: usize,
+    },
 }
 
 impl<L> Node<L> {
 
+    /// Creates a new leaf node.
     pub fn new_leaf(prediction: L) -> Self {
-        Node {
-            is_leaf: true,
-            prediction,
-            feature_index: 0,
-            threshold: 0.0,
-            left_child_index: 0,
-            right_child_index: 0,
-        }
+        Node::Leaf { prediction }
     }
 
-    pub fn new_split(
-        feature_index: u8,
-        threshold: f32,
-        left_child_index: usize,
-        right_child_index: usize)
-        -> Self where L: Default {
-        Node {
-            is_leaf: false,
-            prediction: L::default(),
+    /// Creates a new split node.
+    pub fn new_split(feature_index: u8, threshold: f32, left_child_index: usize, right_child_index: usize,
+    ) -> Self {
+        Node::Split {
             feature_index,
             threshold,
             left_child_index,
             right_child_index,
         }
     }
-}
 
+    pub fn is_leaf(&self) -> bool {
+        matches!(self, Node::Leaf { .. })
+    }
+
+    // Getters
+
+    pub fn get_prediction(&self) -> Option<&L> {
+        if let Node::Leaf { prediction } = self {
+            Some(prediction)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_mut_prediction(&mut self) -> Option<&mut L> {
+        if let Node::Leaf { prediction } = self {
+            Some(prediction)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_split_details(&self) -> Option<(u8, f32, usize, usize)> {
+        if let Node::Split { feature_index, threshold, left_child_index, right_child_index,
+        } = self {
+            Some((*feature_index, *threshold, *left_child_index, *right_child_index))
+        } else {
+            None
+        }
+    }
+}
 
 pub struct Tree<L, const MAX_NODES: usize> {
     nodes: [Node<L>; MAX_NODES],
     num_nodes: usize,
 }
-
-
