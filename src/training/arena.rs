@@ -1,11 +1,12 @@
-use crate::tree::Node;
-use crate::errors::ArenaError;
+use crate::node::Node;
+use crate::training::error::ArenaError;
 
 #[derive(Debug)]
 pub struct NodeArena<L, const N: usize> {
     nodes: [Option<Node<L>>; N],
     len: u16, // number of nodes in the arena (max 65,535).
 }
+
 
 impl<L, const N: usize> Default for NodeArena<L, N> {
     fn default() -> Self {
@@ -37,7 +38,7 @@ impl<L, const N: usize> NodeArena<L, N> {
         let index = self.len as usize;
         self.nodes[index] = Some(node);
         self.len += 1;
-        
+
         Ok(index)
     }
 
@@ -56,9 +57,7 @@ impl<L, const N: usize> NodeArena<L, N> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tree::Node;
-    use crate::errors::ArenaError;
-    
+
     #[test]
     fn test_alloc_and_retrieval() {
         let mut arena: NodeArena<i32, 3> = NodeArena::new();

@@ -31,6 +31,9 @@
 // #[warn(missing_docs)]
 #[allow(dead_code)] // Todo: remove this
 
-mod tree;
-mod arena;
-mod errors;
+
+pub mod inference;
+mod node;
+
+#[cfg(feature = "training")]
+pub mod training;
