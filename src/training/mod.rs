@@ -1,3 +1,4 @@
-mod tree;
-mod error;
-mod arena;
+pub mod tree;
+pub mod error;
+pub mod arena;
+pub mod gini;
