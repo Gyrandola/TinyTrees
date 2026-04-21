@@ -1,5 +1,6 @@
 use core::fmt;
 
+#[derive(Debug)]
 pub enum InferenceError {
     InvalidNodeIndex,
     FeatureIndexOutOfBounds

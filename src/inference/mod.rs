@@ -1,2 +1,2 @@
-mod tree;
-mod error;
+pub mod tree;
+pub mod error;

@@ -33,7 +33,7 @@
 
 
 pub mod inference;
-mod node;
+pub mod node;
 
 #[cfg(feature = "training")]
 pub mod training;
